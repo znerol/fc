@@ -1,3 +1,5 @@
 bin
 src/fc/jcc/*.java
 .settings
+lib
+*~
