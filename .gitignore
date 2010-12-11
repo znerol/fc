@@ -1,5 +1,5 @@
 bin
-src/fc/jcc/*.java
+src/fc/grammar/javacc/*.java
 .settings
 lib
 *~

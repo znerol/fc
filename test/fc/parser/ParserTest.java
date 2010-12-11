@@ -10,7 +10,10 @@ import fc.lang.Scope;
 import fc.parser.common.ParseException;
 
 public class ParserTest {
-    fc.parser.common.Parser[] parsers = { new fc.parser.rdp.Parser(), };
+    fc.parser.common.Parser[] parsers = {
+            new fc.parser.rdp.Parser(),
+            new fc.parser.javacc.Parser(),
+    };
 
     @Test
     public void testConstantValue() throws ParseException, EvaluationException {
@@ -37,7 +40,7 @@ public class ParserTest {
             EvaluationException {
         for (fc.parser.common.Parser parser : parsers) {
             Scope scope = new Scope();
-            Expression expression = parser.parse("\r42/2+\t6 -4* 1");
+            Expression expression = parser.parse("\r42/2+\t6 -4.0* 1");
             double result = expression.evaluate(scope);
             assertEquals(23.0, result, 0.0);
         }
