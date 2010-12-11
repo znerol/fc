@@ -60,19 +60,19 @@ public class Lexer {
             break;
 
         default:
-            String nameOrNumber = scanNameOrNumber();
+            String identifierOrNumber = scanIdentifierOrNumber();
 
             try {
                 Number number;
-                number = NumberFormat.getInstance().parse(nameOrNumber);
+                number = NumberFormat.getInstance().parse(identifierOrNumber);
                 result = new Token(Symbol.NUMBER, number);
             }
             catch (ParseException e) {
-                if (nameOrNumber.equals("let")) {
+                if (identifierOrNumber.equals("let")) {
                     result = new Token(Symbol.LET);
                 }
                 else {
-                    result = new Token(Symbol.NAME, nameOrNumber);
+                    result = new Token(Symbol.IDENTIFIER, identifierOrNumber);
                 }
             }
         }
@@ -86,7 +86,7 @@ public class Lexer {
             ;
     }
 
-    private String scanNameOrNumber() {
+    private String scanIdentifierOrNumber() {
         String result = "";
 
         for (char c = charIterator.current(); c != CharacterIterator.DONE

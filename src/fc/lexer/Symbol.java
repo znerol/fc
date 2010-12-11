@@ -10,6 +10,6 @@ public enum Symbol {
     MULTIPLY,
     DIVIDE,
     LET,
-    NAME,
+    IDENTIFIER,
     NUMBER,
 }

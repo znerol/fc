@@ -71,7 +71,7 @@ public class Parser implements fc.parser.common.Parser {
     /**
      * Parse a factor
      * 
-     * factor -> number | name | (expr)
+     * factor -> number | identifier | (expr)
      * 
      * @return
      * @throws ParseException
@@ -106,7 +106,7 @@ public class Parser implements fc.parser.common.Parser {
             result = new ConstantValueExpression(token.getNumberValue()
                     .doubleValue());
         }
-        else if ((token = accept(Symbol.NAME)) != null) {
+        else if ((token = accept(Symbol.IDENTIFIER)) != null) {
             result = new VariableExpression(token.getStringValue());
         }
         else if (accept(Symbol.LPAREN) != null) {
@@ -115,7 +115,7 @@ public class Parser implements fc.parser.common.Parser {
         }
         else {
             throw new ParseException(
-                    "Expected a number, name or a left parenthesis but got "
+                    "Expected a number, identifier or a left parenthesis but got "
                             + currentToken.getSymbol() + " instead");
         }
 
@@ -191,7 +191,7 @@ public class Parser implements fc.parser.common.Parser {
     /**
      * Parse a basic statement
      * 
-     * stm -> let name = expr | expr
+     * stm -> let identifier = expr | expr
      *
      * @return resulting expression
      * @throws ParseException
@@ -201,10 +201,10 @@ public class Parser implements fc.parser.common.Parser {
 
         if (accept(Symbol.LET) != null) {
             // parse assignment statement (let x = expr)
-            String name = expect(Symbol.NAME).getStringValue();
+            String identifier = expect(Symbol.IDENTIFIER).getStringValue();
             expect(Symbol.EQUAL);
             Expression expression = parseExpression();
-            result = new AssignementExpression(name, expression);
+            result = new AssignementExpression(identifier, expression);
         }
         else {
             result = parseExpression();

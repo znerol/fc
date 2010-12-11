@@ -63,7 +63,7 @@ public class LexerTest {
         Token token;
         
         token = lexer.nextToken();
-        assertEquals(Symbol.NAME, token.getSymbol());
+        assertEquals(Symbol.IDENTIFIER, token.getSymbol());
         assertEquals("x", token.getStringValue());
         token = lexer.nextToken();
         assertEquals(Symbol.END, token.getSymbol());
