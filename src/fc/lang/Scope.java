@@ -19,7 +19,7 @@ public class Scope {
      * @param expression
      *            which should be bound to the given name
      */
-    void bind(String name, Expression expression) {
+    public void bind(String name, Expression expression) {
         bindings.put(name, expression);
     }
 
@@ -29,7 +29,7 @@ public class Scope {
      * @param name
      *            of a variable bound in this scope
      */
-    void unbind(String name) {
+    public void unbind(String name) {
         bindings.remove(name);
     }
 
@@ -42,7 +42,7 @@ public class Scope {
      * @throws UnboundVariableException
      *             given variable is not bound in the current scope.
      */
-    Expression resolve(String name) throws UnboundVariableException {
+    public Expression resolve(String name) throws UnboundVariableException {
         Expression result = bindings.get(name);
 
         if (result == null) {
