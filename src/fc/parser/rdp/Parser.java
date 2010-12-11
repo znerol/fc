@@ -69,55 +69,57 @@ public class Parser implements fc.parser.common.Parser {
     }
 
     /**
-     * Parse a factor, possibly with leading unary minus
+     * Parse a basic statement
      * 
-     * Factor -> [ '-' ] ( '(' Expr ')' | Num | Identifier )
-     * 
-     * Note: this function covers the first part of the EBNF rule above.
+     * Statement -> 'let' Identifier '=' Expr | Expr
+     *
+     * @return resulting expression
+     * @throws ParseException
      */
-    private Expression parseFactor() throws ParseException {
+    private Expression parseStatement() throws ParseException {
         Expression result;
 
-        // first term
-        if (accept(Symbol.MINUS) != null) {
-            // parse unary minus if any
-            Expression term = parseFactorUnsigned();
-            result = new FunctionExpression(new ChangeSignFunction(), term);
-            advance();
+        if (accept(Symbol.LET) != null) {
+            // parse assignment statement (let x = expr)
+            String identifier = expect(Symbol.IDENTIFIER).getStringValue();
+            expect(Symbol.EQUAL);
+            Expression expression = parseExpression();
+            result = new AssignementExpression(identifier, expression);
         }
         else {
-            result = parseFactorUnsigned();
+            result = parseExpression();
         }
 
         return result;
     }
 
     /**
-     * Parse factor without leading unary minus
+     * Parse an addition or difference expression
      *
-     * Factor -> [ '-' ] ( '(' Expr ')' | Num | Identifier )
+     * Expr -> Term { ('+'|'-') Term }
      *
-     * Note: this function covers the second part of the EBNF rule above.
+     * @return
+     * @throws ParseException
      */
-    private Expression parseFactorUnsigned() throws ParseException {
+    private Expression parseExpression() throws ParseException {
         Expression result;
+        // left summand
+        result = parseTerm();
 
-        Token token;
-        if ((token = accept(Symbol.NUMBER)) != null) {
-            result = new ConstantValueExpression(token.getNumberValue()
-                    .doubleValue());
-        }
-        else if ((token = accept(Symbol.IDENTIFIER)) != null) {
-            result = new VariableExpression(token.getStringValue());
-        }
-        else if (accept(Symbol.LPAREN) != null) {
-            result = parseExpression();
-            expect(Symbol.RPAREN);
-        }
-        else {
-            throw new ParseException(
-                    "Expected a number, identifier or a left parenthesis but got "
-                            + currentToken.getSymbol() + " instead");
+        // parse additional summands if any
+        while (true) {
+            if (accept(Symbol.PLUS) != null) {
+                Expression term = parseTerm();
+                result = new FunctionExpression(new SumFunction(), result, term);
+            }
+            else if (accept(Symbol.MINUS) != null) {
+                Expression term = parseTerm();
+                result = new FunctionExpression(new DifferenceFunction(),
+                        result, term);
+            }
+            else {
+                break;
+            }
         }
 
         return result;
@@ -158,57 +160,55 @@ public class Parser implements fc.parser.common.Parser {
     }
 
     /**
-     * Parse an addition or difference expression
-     *
-     * Expr -> Term { ('+'|'-') Term }
-     *
-     * @return
-     * @throws ParseException
+     * Parse a factor, possibly with leading unary minus
+     * 
+     * Factor -> [ '-' ] ( '(' Expr ')' | Num | Identifier )
+     * 
+     * Note: this function covers the first part of the EBNF rule above.
      */
-    private Expression parseExpression() throws ParseException {
+    private Expression parseFactor() throws ParseException {
         Expression result;
-        // left summand
-        result = parseTerm();
 
-        // parse additional summands if any
-        while (true) {
-            if (accept(Symbol.PLUS) != null) {
-                Expression term = parseTerm();
-                result = new FunctionExpression(new SumFunction(), result, term);
-            }
-            else if (accept(Symbol.MINUS) != null) {
-                Expression term = parseTerm();
-                result = new FunctionExpression(new DifferenceFunction(),
-                        result, term);
-            }
-            else {
-                break;
-            }
+        // first term
+        if (accept(Symbol.MINUS) != null) {
+            // parse unary minus if any
+            Expression term = parseFactorUnsigned();
+            result = new FunctionExpression(new ChangeSignFunction(), term);
+            advance();
+        }
+        else {
+            result = parseFactorUnsigned();
         }
 
         return result;
     }
 
     /**
-     * Parse a basic statement
-     * 
-     * Statement -> 'let' Identifier '=' Expr | Expr
+     * Parse factor with leading unary minus removed
      *
-     * @return resulting expression
-     * @throws ParseException
+     * Factor -> [ '-' ] ( '(' Expr ')' | Num | Identifier )
+     *
+     * Note: this function covers the second part of the EBNF rule above.
      */
-    private Expression parseStatement() throws ParseException {
+    private Expression parseFactorUnsigned() throws ParseException {
         Expression result;
 
-        if (accept(Symbol.LET) != null) {
-            // parse assignment statement (let x = expr)
-            String identifier = expect(Symbol.IDENTIFIER).getStringValue();
-            expect(Symbol.EQUAL);
-            Expression expression = parseExpression();
-            result = new AssignementExpression(identifier, expression);
+        Token token;
+        if ((token = accept(Symbol.NUMBER)) != null) {
+            result = new ConstantValueExpression(token.getNumberValue()
+                    .doubleValue());
+        }
+        else if ((token = accept(Symbol.IDENTIFIER)) != null) {
+            result = new VariableExpression(token.getStringValue());
+        }
+        else if (accept(Symbol.LPAREN) != null) {
+            result = parseExpression();
+            expect(Symbol.RPAREN);
         }
         else {
-            result = parseExpression();
+            throw new ParseException(
+                    "Expected a number, identifier or a left parenthesis but got "
+                            + currentToken.getSymbol() + " instead");
         }
 
         return result;
