@@ -119,27 +119,42 @@ public class ParserTest {
         }
     }
 
-    @Test(expected = ParseException.class)
-    public void testUnbalancedParanthesis() throws ParseException,
-            EvaluationException {
+    @Test
+    public void testUnbalancedParanthesis() {
         for (fc.parser.common.Parser parser : parsers) {
-            parser.parse(" 8 + 7 ((5*6/4)");
+            try {
+                parser.parse(" 8 + 7 ((5*6/4)");
+                fail("Parser " + parser + " must throw ParseException if the number of left and right paranthesis do not match");
+            }
+            catch (ParseException e) {
+                // expected
+            }
         }
     }
 
-    @Test(expected = ParseException.class)
-    public void testMissingOperator() throws ParseException,
-            EvaluationException {
+    @Test
+    public void testMissingOperator() {
         for (fc.parser.common.Parser parser : parsers) {
-            parser.parse("8 x + 4");
+            try {
+                parser.parse("8 x + 4");
+                fail("Parser " + parser + " must throw ParseException if operators are missing in expressions");
+            }
+            catch (ParseException e) {
+                // expected
+            }
         }
     }
 
-    @Test(expected = ParseException.class)
-    public void testMultipleOperators() throws ParseException,
-            EvaluationException {
+    @Test
+    public void testMultipleOperators() {
         for (fc.parser.common.Parser parser : parsers) {
-            parser.parse("8 * + 4");
+            try {
+                parser.parse("8 * + 4");
+                fail("Parser " + parser + " must throw ParseException if multiple operators follow each other");
+            }
+            catch (ParseException e) {
+                // expected
+            }
         }
     }
 }
