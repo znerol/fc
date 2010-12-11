@@ -3,6 +3,7 @@ package fc.parser.javacc;
 import java.io.StringReader;
 
 import fc.grammar.javacc.CalculatorGrammer;
+import fc.grammar.javacc.TokenMgrError;
 import fc.lang.Expression;
 import fc.parser.common.ParseException;
 
@@ -15,9 +16,12 @@ public class Parser implements fc.parser.common.Parser {
         Expression result;
 
         try {
-            result = grammar.parseStatement();
+            result = grammar.parse();
         }
         catch (fc.grammar.javacc.ParseException e) {
+            throw new ParseException(e.getMessage());
+        }
+        catch (TokenMgrError e) {
             throw new ParseException(e.getMessage());
         }
 

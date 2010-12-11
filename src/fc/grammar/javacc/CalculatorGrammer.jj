@@ -68,6 +68,15 @@ TOKEN : /* identifier */
   < IDENTIFIER : [ "a" - "z", "A" - "Z" ] >
 }
 
+Expression parse() :
+{  Expression result;
+}
+{  result = parseStatement()
+  < EOF >
+  {    return result;
+  }
+}
+
 Expression parseStatement() :
 {
   Token token;
