@@ -79,6 +79,28 @@ public class Parser implements fc.parser.common.Parser {
     private Expression parseFactor() throws ParseException {
         Expression result;
 
+        // first term
+        if (accept(Symbol.MINUS) != null) {
+            // parse unary minus if any
+            Expression term = parseFactorUnsigned();
+            result = new FunctionExpression(new ChangeSignFunction(), term);
+            advance();
+        }
+        else {
+            result = parseFactorUnsigned();
+        }
+
+        return result;
+    }
+
+    /**
+     * Parse factor
+     * @return
+     * @throws ParseException
+     */
+    private Expression parseFactorUnsigned() throws ParseException {
+        Expression result;
+
         Token token;
         if ((token = accept(Symbol.NUMBER)) != null) {
             result = new ConstantValueExpression(token.getNumberValue()
@@ -144,16 +166,8 @@ public class Parser implements fc.parser.common.Parser {
      */
     private Expression parseExpression() throws ParseException {
         Expression result;
-        // first term
-        if (accept(Symbol.MINUS) != null) {
-            // parse unary minus if any
-            Expression term = parseTerm();
-            result = new FunctionExpression(new ChangeSignFunction(), term);
-            advance();
-        }
-        else {
-            result = parseTerm();
-        }
+        // left summand
+        result = parseTerm();
 
         // parse additional summands if any
         while (true) {

@@ -72,6 +72,23 @@ public class ParserTest {
         }
     }
 
+    @Test
+    public void testVariableBindingNegativeFactors() throws ParseException, EvaluationException {
+        for (fc.parser.common.Parser parser : parsers) {
+            Scope scope = new Scope();
+            double result;
+
+            result = parser.parse("let x = 7").evaluate(scope);
+            assertEquals(7, result, 0.0);
+
+            result = parser.parse("let y = 8").evaluate(scope);
+            assertEquals(8, result, 0.0);
+
+            result = parser.parse("x * -y").evaluate(scope);
+            assertEquals(-56, result, 0.0);
+        }
+    }
+
     @Test(expected=ParseException.class)
     public void testUnbalancedParanthesis() throws ParseException, EvaluationException {
         for (fc.parser.common.Parser parser : parsers) {
