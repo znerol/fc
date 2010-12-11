@@ -20,9 +20,11 @@ import fc.lang.MultiplicationFunction;
 import fc.lang.SumFunction;
 import fc.lang.VariableExpression;
 
+/**
+ * Implementation of a LL(1) parser using JavaCC
+ */
 public class CalculatorGrammer
 {
-  
 }
 
 PARSER_END(CalculatorGrammer)
@@ -68,16 +70,27 @@ TOKEN : /* identifier */
   < IDENTIFIER : [ "a" - "z", "A" - "Z" ] >
 }
 
-Expression parse() :
-{  Expression result;
+/**
+ * Entry point. Use this method to parse one line read from the input source.
+ */
+public Expression parse() :
+{
+  Expression result;
 }
-{  result = parseStatement()
+{
+  result = parseStatement()
   < EOF >
-  {    return result;
+  {
+    return result;
   }
 }
 
-Expression parseStatement() :
+/**
+ * Parse a basic statement
+ * 
+ * Statement -> 'let' Identifier '=' Expr | Expr
+ */
+private Expression parseStatement() :
 {
   Token token;
   Expression result;
@@ -100,7 +113,13 @@ Expression parseStatement() :
   }
 }
 
-Expression parseExpression() :
+/**
+ * Parse an addition or difference expression
+ *
+ * Expr -> Term { ('+'|'-') Term }
+ *
+ */
+private Expression parseExpression() :
 {
     Expression result;
     Expression term;
@@ -127,7 +146,13 @@ Expression parseExpression() :
   }
 }
 
-Expression parseTerm() :
+/**
+ * Parse a term
+ *
+ * Term -> Factor { ('*'|'/') Factor }
+ *
+ */
+private Expression parseTerm() :
 {
     Expression result;
     Expression factor;
@@ -154,7 +179,14 @@ Expression parseTerm() :
   }
 }
 
-Expression parseFactor() :
+/**
+ * Parse a factor, possibly with leading unary minus
+ *
+ * Factor -> [ '-' ] ( '(' Expr ')' | Num | Identifier )
+ *
+ * Note: this function covers the first part of the EBNF rule above.
+ */
+private Expression parseFactor() :
 {
   Expression result;
   Expression factor;
@@ -174,7 +206,14 @@ Expression parseFactor() :
   }
 }
 
-Expression parseUnsignedFactor() :
+/**
+ * Parse factor with leading unary minus removed
+ *
+ * Factor -> [ '-' ] ( '(' Expr ')' | Num | Identifier )
+ *
+ * Note: this function covers the second part of the EBNF rule above.
+ */
+private Expression parseUnsignedFactor() :
 {
   Expression result;
   Token token;
