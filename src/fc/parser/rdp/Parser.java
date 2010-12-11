@@ -174,7 +174,6 @@ public class Parser implements fc.parser.common.Parser {
             // parse unary minus if any
             Expression term = parseFactorUnsigned();
             result = new FunctionExpression(new ChangeSignFunction(), term);
-            advance();
         }
         else {
             result = parseFactorUnsigned();
