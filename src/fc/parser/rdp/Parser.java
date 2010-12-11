@@ -69,12 +69,11 @@ public class Parser implements fc.parser.common.Parser {
     }
 
     /**
-     * Parse a factor
+     * Parse a factor, possibly with leading unary minus
      * 
-     * factor -> number | identifier | (expr)
+     * Factor -> [ '-' ] ( '(' Expr ')' | Num | Identifier )
      * 
-     * @return
-     * @throws ParseException
+     * Note: this function covers the first part of the EBNF rule above.
      */
     private Expression parseFactor() throws ParseException {
         Expression result;
@@ -94,9 +93,11 @@ public class Parser implements fc.parser.common.Parser {
     }
 
     /**
-     * Parse factor
-     * @return
-     * @throws ParseException
+     * Parse factor without leading unary minus
+     *
+     * Factor -> [ '-' ] ( '(' Expr ')' | Num | Identifier )
+     *
+     * Note: this function covers the second part of the EBNF rule above.
      */
     private Expression parseFactorUnsigned() throws ParseException {
         Expression result;
@@ -125,7 +126,7 @@ public class Parser implements fc.parser.common.Parser {
     /**
      * Parse a term
      * 
-     * term -> factor | factor [*|/] factor
+     * Term -> Factor { ('*'|'/') Factor }
      * 
      * @return
      * @throws ParseException
@@ -157,9 +158,9 @@ public class Parser implements fc.parser.common.Parser {
     }
 
     /**
-     * Parse a sum expression
+     * Parse an addition or difference expression
      *
-     * expr -> -term | term | term [+|-] term
+     * Expr -> Term { ('+'|'-') Term }
      *
      * @return
      * @throws ParseException
@@ -191,7 +192,7 @@ public class Parser implements fc.parser.common.Parser {
     /**
      * Parse a basic statement
      * 
-     * stm -> let identifier = expr | expr
+     * Statement -> 'let' Identifier '=' Expr | Expr
      *
      * @return resulting expression
      * @throws ParseException
