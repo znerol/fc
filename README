@@ -1,0 +1,20 @@
+fc - Floating Point Calculator
+
+Fc is the result of a students project in scope of the 2010 fall term lecture
+Automata and Formal languages at University of Applied Science Berne.
+
+https://modules.ti.bfh.ch/tcs/www/2010hs/afl/
+
+The floating point calculator consists of a lexer and different types of
+parsers matching the following grammar (EBNF):
+
+    Statement ->  'let' Identifier '=' Expr | 'exit' | Expr
+    Expr -> Term { ('+'|'-') Term }
+    Term -> Factor { ('*'|'/') Factor }
+    Factor -> '(' Expr ')' | [ '-' ] ( Num | Identifier )
+    
+    Num is a real number (without exposant) and Identifier is a sequence of
+    letters.
+
+Two parser implementations must be realized, one using JavaCC and another one
+implemented without the help of third party java frameworks.
