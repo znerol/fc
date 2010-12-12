@@ -10,15 +10,35 @@ import fc.parser.common.ParseException;
 import fc.parser.common.Parser;
 
 public class Calculator {
-    private static boolean done = false;
     private static String prompt = "> ";
     
     public static void main(String[] args) {
+        String parserName = System.getProperty("parser", "fc.parser.rdp.Parser");
+        Parser parser;
+
+        try {
+            parser = (Parser) Class.forName(parserName).newInstance();
+        }
+        catch (InstantiationException e) {
+            System.out.println(e);
+            System.out.println("ERROR: Failed to instantiate the specified parser class");
+            return;
+        }
+        catch (IllegalAccessException e) {
+            System.out.println(e);
+            System.out.println("ERROR: Failed to access the specified parser class");
+            return;
+        }
+        catch (ClassNotFoundException e) {
+            System.out.println(e);
+            System.out.println("ERROR: The specified parser class was not found");
+            return;
+        }
+
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-        Parser parser = new fc.parser.rdp.Parser();
         Scope scope = new Scope();
 
-        while(!done) {
+        while(true) {
             System.out.print(prompt);
             String line = "";
 
@@ -27,7 +47,11 @@ public class Calculator {
             }
             catch (IOException e) {
                 System.out.println(e);
-                return;
+                break;
+            }
+
+            if (line == null) {
+                break;
             }
 
             try {
@@ -40,5 +64,7 @@ public class Calculator {
                 System.out.println(e);
             }
         }
+
+        System.out.println("bye");
     }
 }
