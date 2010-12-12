@@ -1,5 +1,8 @@
 fc - Floating Point Calculator
 
+ABOUT
+=====
+
 Fc is the result of a students project in scope of the 2010 fall term lecture
 Automata and Formal languages at University of Applied Science Berne.
 
@@ -18,3 +21,25 @@ parsers matching the following grammar (EBNF):
 
 Two parser implementations must be realized, one using JavaCC and another one
 implemented without the help of third party java frameworks.
+
+COMPILE & RUN
+=============
+Please import the project into eclipse to build the software. There are
+some prepared run configurations in the 'misc' directory. Choose 'Organize 
+Favorites' from the 'run' drop down menu to enable them.
+
+You may also run the software from the command line. By means of the 'parser'
+property it is even possible to choose which parser implementation is used:
+
+java fc.cli.Calculator -Dparser=fc.parser.rdp.Parser
+java fc.cli.Calculator -Dparser=fc.parser.javacc.Parser
+
+AUTOMATED TESTING
+=================
+There are unit tests in place which cover nearly the whole lexer and rdp parser
+and a great deal of the generated JavaCC code. Some test cases depend on the
+mocking framework mockito. Please enable mockito in the 'java build path'
+section in the project properties. Mockito is free software and can be optained
+from the mockito website:
+
+http://www.mockito.org/
