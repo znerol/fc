@@ -40,4 +40,13 @@ public class Token {
     public int getPosition() {
         return position;
     }
+
+    public String toString() {
+        if (stringValue != null) {
+            return stringValue;
+        }
+        else {
+            return symbol.toString();
+        }
+    }
 }

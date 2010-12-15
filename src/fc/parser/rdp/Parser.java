@@ -62,8 +62,8 @@ public class Parser implements fc.parser.common.Parser {
         Token previousToken = accept(symbol);
 
         if (previousToken == null) {
-            throw new ParseException("Expected symbol " + symbol + " but got "
-                    + currentToken.getSymbol() + " instead", currentToken.getPosition());
+            throw new ParseException("Expected " + symbol + " but got '"
+                    + currentToken + "' instead", currentToken.getPosition());
         }
 
         return previousToken;
