@@ -12,6 +12,8 @@ import fc.parser.common.Parser;
 
 public class Calculator {
     private static String prompt = "> ";
+    private static String outprefix = "  ";
+    private static String markprefix = "--";
     
     public static void main(String[] args) {
         String parserName = System.getProperty("parser", "fc.parser.rdp.Parser");
@@ -68,14 +70,14 @@ public class Calculator {
                 }
 
                 // print result and continue
-                System.out.println(result);
+                System.out.println(outprefix + result);
             }
             catch (EvaluationException e) {
-                System.out.println(e.getLocalizedMessage());
+                System.out.println(outprefix + e.getLocalizedMessage());
             }
             catch (ParseException e) {
                 System.out.println(e.getColumnMarker("--", '-', '^'));
-                System.out.println(e.getLocalizedMessage());
+                System.out.println(outprefix + e.getLocalizedMessage());
             }
 
         }
