@@ -65,7 +65,7 @@ public class Lexer {
             try {
                 Number number;
                 number = NumberFormat.getInstance().parse(identifierOrNumber);
-                result = new Token(charIterator.getIndex() + 1, Symbol.NUMBER, number);
+                result = new Token(charIterator.getIndex() + 1, Symbol.NUMBER, identifierOrNumber, number);
             }
             catch (ParseException e) {
                 if (identifierOrNumber.equals("let")) {
