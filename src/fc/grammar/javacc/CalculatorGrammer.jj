@@ -1,249 +1,44 @@
-/**
+ /**
  * JavaCC template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
- */
-options
-{
-  JDK_VERSION = "1.5";
-  static = false;
-}
-
-PARSER_BEGIN(CalculatorGrammer)
-package fc.grammar.javacc;
-import fc.lang.AssignementExpression;
-import fc.lang.ChangeSignFunction;
-import fc.lang.ConstantValueExpression;
-import fc.lang.DifferenceFunction;
-import fc.lang.DivisionFunction;
-import fc.lang.ExitCommand;
-import fc.lang.Expression;
-import fc.lang.FunctionExpression;
-import fc.lang.MultiplicationFunction;
-import fc.lang.SumFunction;
-import fc.lang.VariableExpression;
-
-/**
+ */options{  JDK_VERSION = "1.5";  static = false;}PARSER_BEGIN(CalculatorGrammer)package fc.grammar.javacc;import fc.lang.AssignementExpression;import fc.lang.ChangeSignFunction;import fc.lang.ConstantValueExpression;import fc.lang.DifferenceFunction;import fc.lang.DivisionFunction;import fc.lang.ExitCommand;import fc.lang.Expression;import fc.lang.FunctionExpression;import fc.lang.MultiplicationFunction;import fc.lang.SumFunction;import fc.lang.VariableExpression;/**
  * Implementation of a LL(1) parser using JavaCC
- */
-public class CalculatorGrammer
-{
-}
-
-PARSER_END(CalculatorGrammer)
-
-SKIP :
-{
-  " "
-| "\r"
-| "\t"
-| "\n"
-}
-
-TOKEN : /* OPERATORS */
-{
-  < PLUS : "+" >
-| < MINUS : "-" >
-| < MULTIPLY : "*" >
-| < DIVIDE : "/" >
-}
-
-TOKEN : /* parenthesis */
-{
-  < LPAREN : "(" >
-| < RPAREN : ")" >
-}
-
-TOKEN : /* assignment */
-{
-  < EQUAL : "=" >
-| < LET : "let" >
-}
-
-TOKEN : /* decimal number */
-{
-  < NUMBER : (< DIGIT >)+ | (< DIGIT >)+ "." (< DIGIT >)+ | (< DIGIT >)+ "." |
-"." (< DIGIT >)+ >
-
-| < #DIGIT : [ "0"-"9" ] >
-}
-
-TOKEN : /* identifier */
-{
-  < IDENTIFIER : [ "a" - "z", "A" - "Z" ] >
-}
-
-TOKEN : /* commands */
-{  < EXIT : "exit" >
-}
-
-/**
+ */public class CalculatorGrammer{}PARSER_END(CalculatorGrammer)SKIP :{  " "| "\r"| "\t"| "\n"}TOKEN : /* OPERATORS */{  < PLUS : "+" >| < MINUS : "-" >| < MULTIPLY : "*" >| < DIVIDE : "/" >}TOKEN : /* parenthesis */{  < LPAREN : "(" >| < RPAREN : ")" >}TOKEN : /* assignment */{  < EQUAL : "=" >| < LET : "let" >}TOKEN : /* decimal number */{  < NUMBER :    (< DIGIT >)+  | (< DIGIT >)+ "." (< DIGIT >)+  | (< DIGIT >)+ "."  | "." (< DIGIT >)+ >| < #DIGIT : [ "0"-"9" ] >}TOKEN : /* commands */{  < EXIT : "exit" >}TOKEN : /* identifier */{  < IDENTIFIER : ([ "a"-"z", "A"-"Z" ])+ >}/**
  * Entry point. Use this method to parse one line read from the input source.
- */
-public Expression parse() :
-{
-  Expression result;
-}
-{
-  result = parseStatement()
-  < EOF >
-  {
-    return result;
-  }
-}
-
-/**
+ */public Expression parse() throws fc.parser.common.ParseException :{  Expression result;}{  result = parseStatement()  try  {    < EOF >  }  catch (ParseException ex)  {    // I confess, the error message here is not that obvious. The reason for it
+    // is however simple: If we got until here, then we've parsed a complete
+    // statement successfully. The only thing which could potentially follow
+    // a complete statement is some operator.    throw new fc.parser.common.ParseException("Expecting an operator ('+','-','*','/') but got '" + ex.currentToken.next + "' instead", ex.currentToken.next.beginColumn);  }  {    return result;  }}/**
  * Parse a basic statement
  * 
  * Statement -> 'let' Identifier '=' Expr | Expr
- */
-private Expression parseStatement() :
-{
-  Token token;
-  Expression result;
-  Expression expression;
-}
-{
-  (
-    < LET >
-    token = < IDENTIFIER >
-    < EQUAL >
-    {
-      expression = parseExpression();
-      result = new AssignementExpression(token.toString(), expression);
-    }
-  |
-    < EXIT >
-    {
-      result = new ExitCommand();    }
-  | 
-    result = parseExpression()
-  )
-  {
-    return result;
-  }
-}
-
-/**
+ */private Expression parseStatement() throws fc.parser.common.ParseException :{  Token token;  Expression result;  Expression expression;}{  try  {    (< LET > try    {      token = < IDENTIFIER >    }    catch (ParseException ex)    {      throw new fc.parser.common.ParseException("Expecting identifier after 'let' keyword", ex.currentToken.next.beginColumn);    }    try    {      < EQUAL >    }    catch (ParseException ex)    {      throw new fc.parser.common.ParseException("Expecting '=' sign after identifier", ex.currentToken.next.beginColumn);    }    {      expression = parseExpression();      result = new AssignementExpression(token.toString(), expression);    }  | < EXIT >    {      result = new ExitCommand();    }  | result = parseExpression())  }  catch (ParseException ex)  {    throw new fc.parser.common.ParseException("Expecting an expression, a 'let' statement or 'exit' but got '" + ex.currentToken.next + "' instead", ex.currentToken.next.beginColumn);  }  {    return result;  }}/**
  * Parse an addition or difference expression
  *
  * Expr -> Term { ('+'|'-') Term }
  *
- */
-private Expression parseExpression() :
-{
-    Expression result;
-    Expression term;
-}
-{
-  result = parseTerm()
-  (
-    (
-      < PLUS >
-      {
-        term = parseTerm();
-        result = new FunctionExpression(new SumFunction(), result, term);
-      }
-    |
-      < MINUS >
-      {
-        term = parseTerm();
-        result = new FunctionExpression(new DifferenceFunction(), result, term);
-      }
-    )
-  )*
-  {
-    return result;
-  }
-}
-
-/**
+ */private Expression parseExpression() throws fc.parser.common.ParseException :{  Expression result;  Expression term;}{  result = parseTerm()  try  {    (< PLUS >    {      term = parseTerm();      result = new FunctionExpression(new SumFunction(), result, term);    }  | < MINUS >    {      term = parseTerm();      result = new FunctionExpression(new DifferenceFunction(), result, term);    }    ) *  }  catch (ParseException ex)  {    throw new fc.parser.common.ParseException("Expecting an operator ('+','-','*','/') but got '" + ex.currentToken.next + "' instead", ex.currentToken.next.beginColumn);  }  {    return result;  }}/**
  * Parse a term
  *
  * Term -> Factor { ('*'|'/') Factor }
  *
- */
-private Expression parseTerm() :
-{
-    Expression result;
-    Expression factor;
-}
-{
-  result = parseFactor()
-  (
-    (
-      < MULTIPLY >
-      {
-        factor = parseFactor();
-        result = new FunctionExpression(new MultiplicationFunction(), result, factor);
-      }
-    |
-      < DIVIDE >
-      {
-        factor = parseFactor();
-        result = new FunctionExpression(new DivisionFunction(), result, factor);
-      }
-    )
-  )*
-  {
-    return result;
-  }
-}
-
-/**
+ */private Expression parseTerm() throws fc.parser.common.ParseException :{  Expression result;  Expression factor;}{  result = parseFactor()  try  {    (< MULTIPLY >    {      factor = parseFactor();      result = new FunctionExpression(new MultiplicationFunction(), result, factor);    }  | < DIVIDE >    {      factor = parseFactor();      result = new FunctionExpression(new DivisionFunction(), result, factor);    }    ) *  }  catch (ParseException ex)  {    throw new fc.parser.common.ParseException("Expecting an operator ('+','-','*','/') but got '" + ex.currentToken.next + "' instead", ex.currentToken.next.beginColumn);  }  {    return result;  }}/**
  * Parse a factor, possibly with leading unary minus
  *
  * Factor -> [ '-' ] ( '(' Expr ')' | Num | Identifier )
  *
  * Note: this function covers the first part of the EBNF rule above.
- */
-private Expression parseFactor() :
-{
-  Expression result;
-  Expression factor;
-}
-{
-  (
-    < MINUS >
-    factor = parseUnsignedFactor()
-    {
-      result = new FunctionExpression(new ChangeSignFunction(), factor);
-    }
-  |
-    result = parseUnsignedFactor()
-  )
-  {
-    return result;
-  }
-}
-
-/**
+ */private Expression parseFactor() throws fc.parser.common.ParseException :{  Expression result;  Expression factor;}{  try  {    (< MINUS > try    {      factor = parseUnsignedFactor()    }    catch (ParseException ex)    {      throw new fc.parser.common.ParseException("Expecting expression but got '" + ex.currentToken.next + "' instead", ex.currentToken.next.beginColumn);    }    {      result = new FunctionExpression(new ChangeSignFunction(), factor);    }  | result = parseUnsignedFactor())  }  catch (ParseException ex)  {    throw new fc.parser.common.ParseException("Expecting a number, an identifier, a unary '-' or an opening brace but got '" + ex.currentToken.next + "' instead", ex.currentToken.next.beginColumn);  }  {    return result;  }}/**
  * Parse factor with leading unary minus removed
  *
  * Factor -> [ '-' ] ( '(' Expr ')' | Num | Identifier )
  *
  * Note: this function covers the second part of the EBNF rule above.
+ */private Expression parseUnsignedFactor() throws fc.parser.common.ParseException :{  Expression result;  Token token;}{  try  {    (token = < NUMBER >    {      result = new ConstantValueExpression(Double.parseDouble(token.toString()));    }  | token = < IDENTIFIER >    {      result = new VariableExpression(token.toString());    }  | < LPAREN > try    {      result = parseExpression()    }    catch (ParseException ex)    {      throw new fc.parser.common.ParseException("Expecting expression but got '" + ex.currentToken.next + "' instead", ex.currentToken.next.beginColumn);    }    try    {      < RPAREN >    }    catch (ParseException ex)    {      throw new fc.parser.common.ParseException("Expecting closing brace ')' but got " + ex.currentToken.next + " instead", ex.currentToken.next.beginColumn);    }    )  }  catch (ParseException ex)  {    throw new fc.parser.common.ParseException("Expecting a number, an identifier or an opening brace but got '" + ex.currentToken.next + "' instead", ex.currentToken.next.beginColumn);  }  {    return result;  }}
+
+/**
+ * http://www.engr.mun.ca/~theo/JavaCC-FAQ/javacc-faq-ie.htm#tth_sEc3.19
  */
-private Expression parseUnsignedFactor() :
+< * > TOKEN :
 {
-  Expression result;
-  Token token;
-}
-{
-  (
-    token = < NUMBER >
-    {
-      result = new ConstantValueExpression(Double.parseDouble(token.toString()));
-    }
-  |
-    token = < IDENTIFIER >
-    {
-      result = new VariableExpression(token.toString());
-    }
-  |
-    < LPAREN >
-    result = parseExpression()
-    < RPAREN >
-  )
-  {
-    return result;
-  }
+    < UNEXPECTED_CHAR : ~[] >
 }

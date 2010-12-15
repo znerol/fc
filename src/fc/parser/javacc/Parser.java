@@ -19,13 +19,12 @@ public class Parser implements fc.parser.common.Parser {
             result = grammar.parse();
         }
         catch (fc.grammar.javacc.ParseException e) {
-            throw new ParseException(e.getMessage());
+            throw new ParseException(e.getMessage(), e.currentToken.next.beginColumn);
         }
         catch (TokenMgrError e) {
-            throw new ParseException(e.getMessage());
+            throw new ParseException(e.getMessage(), 0);
         }
 
         return result;
     }
-
 }

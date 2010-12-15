@@ -71,10 +71,11 @@ public class Calculator {
                 System.out.println(result);
             }
             catch (EvaluationException e) {
-                System.out.println(e);
+                System.out.println(e.getLocalizedMessage());
             }
             catch (ParseException e) {
-                System.out.println(e);
+                System.out.println(e.getColumnMarker("--", '-', '^'));
+                System.out.println(e.getLocalizedMessage());
             }
 
         }

@@ -63,7 +63,7 @@ public class Parser implements fc.parser.common.Parser {
 
         if (previousToken == null) {
             throw new ParseException("Expected symbol " + symbol + " but got "
-                    + currentToken.getSymbol() + " instead");
+                    + currentToken.getSymbol() + " instead", currentToken.getPosition());
         }
 
         return previousToken;
@@ -211,7 +211,7 @@ public class Parser implements fc.parser.common.Parser {
         else {
             throw new ParseException(
                     "Expected a number, identifier or a left parenthesis but got "
-                            + currentToken.getSymbol() + " instead");
+                            + currentToken.getSymbol() + " instead", currentToken.getPosition());
         }
 
         return result;

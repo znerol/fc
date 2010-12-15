@@ -20,42 +20,42 @@ public class Lexer {
 
         switch (charIterator.current()) {
         case CharacterIterator.DONE:
-            result = new Token(Symbol.END);
+            result = new Token(charIterator.getIndex() + 1, Symbol.END);
             charIterator.next();
             break;
 
         case '=':
-            result = new Token(Symbol.EQUAL);
+            result = new Token(charIterator.getIndex() + 1, Symbol.EQUAL);
             charIterator.next();
             break;
 
         case '(':
-            result = new Token(Symbol.LPAREN);
+            result = new Token(charIterator.getIndex() + 1, Symbol.LPAREN);
             charIterator.next();
             break;
 
         case ')':
-            result = new Token(Symbol.RPAREN);
+            result = new Token(charIterator.getIndex() + 1, Symbol.RPAREN);
             charIterator.next();
             break;
 
         case '+':
-            result = new Token(Symbol.PLUS);
+            result = new Token(charIterator.getIndex() + 1, Symbol.PLUS);
             charIterator.next();
             break;
 
         case '-':
-            result = new Token(Symbol.MINUS);
+            result = new Token(charIterator.getIndex() + 1, Symbol.MINUS);
             charIterator.next();
             break;
 
         case '*':
-            result = new Token(Symbol.MULTIPLY);
+            result = new Token(charIterator.getIndex() + 1, Symbol.MULTIPLY);
             charIterator.next();
             break;
 
         case '/':
-            result = new Token(Symbol.DIVIDE);
+            result = new Token(charIterator.getIndex() + 1, Symbol.DIVIDE);
             charIterator.next();
             break;
 
@@ -65,17 +65,17 @@ public class Lexer {
             try {
                 Number number;
                 number = NumberFormat.getInstance().parse(identifierOrNumber);
-                result = new Token(Symbol.NUMBER, number);
+                result = new Token(charIterator.getIndex() + 1, Symbol.NUMBER, number);
             }
             catch (ParseException e) {
                 if (identifierOrNumber.equals("let")) {
-                    result = new Token(Symbol.LET);
+                    result = new Token(charIterator.getIndex() + 1, Symbol.LET);
                 }
                 else if (identifierOrNumber.equals("exit")) {
-                    result = new Token(Symbol.EXIT);
+                    result = new Token(charIterator.getIndex() + 1, Symbol.EXIT);
                 }
                 else {
-                    result = new Token(Symbol.IDENTIFIER, identifierOrNumber);
+                    result = new Token(charIterator.getIndex() + 1, Symbol.IDENTIFIER, identifierOrNumber);
                 }
             }
         }
