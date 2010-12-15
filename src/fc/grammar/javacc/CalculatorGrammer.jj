@@ -14,6 +14,7 @@ import fc.lang.ChangeSignFunction;
 import fc.lang.ConstantValueExpression;
 import fc.lang.DifferenceFunction;
 import fc.lang.DivisionFunction;
+import fc.lang.ExitCommand;
 import fc.lang.Expression;
 import fc.lang.FunctionExpression;
 import fc.lang.MultiplicationFunction;
@@ -70,6 +71,10 @@ TOKEN : /* identifier */
   < IDENTIFIER : [ "a" - "z", "A" - "Z" ] >
 }
 
+TOKEN : /* commands */
+{  < EXIT : "exit" >
+}
+
 /**
  * Entry point. Use this method to parse one line read from the input source.
  */
@@ -106,6 +111,10 @@ private Expression parseStatement() :
       result = new AssignementExpression(token.toString(), expression);
     }
   |
+    < EXIT >
+    {
+      result = new ExitCommand();    }
+  | 
     result = parseExpression()
   )
   {

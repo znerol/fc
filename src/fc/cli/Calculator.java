@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 
 import fc.lang.EvaluationException;
 import fc.lang.Scope;
+import fc.lang.UnboundVariableException;
 import fc.parser.common.ParseException;
 import fc.parser.common.Parser;
 
@@ -55,7 +56,19 @@ public class Calculator {
             }
 
             try {
-                System.out.println(parser.parse(line).evaluate(scope));
+                // parse and evaluate the line
+                double result = parser.parse(line).evaluate(scope);
+
+                try {
+                    scope.resolve("_exit");
+                    break;
+                }
+                catch(UnboundVariableException ex) {
+                    // just continue if special _exit is not defined in scope
+                }
+
+                // print result and continue
+                System.out.println(result);
             }
             catch (EvaluationException e) {
                 System.out.println(e);
@@ -63,6 +76,7 @@ public class Calculator {
             catch (ParseException e) {
                 System.out.println(e);
             }
+
         }
 
         System.out.println("bye");

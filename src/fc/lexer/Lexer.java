@@ -71,6 +71,9 @@ public class Lexer {
                 if (identifierOrNumber.equals("let")) {
                     result = new Token(Symbol.LET);
                 }
+                else if (identifierOrNumber.equals("exit")) {
+                    result = new Token(Symbol.EXIT);
+                }
                 else {
                     result = new Token(Symbol.IDENTIFIER, identifierOrNumber);
                 }

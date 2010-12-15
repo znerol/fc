@@ -5,6 +5,7 @@ import fc.lang.ChangeSignFunction;
 import fc.lang.ConstantValueExpression;
 import fc.lang.DifferenceFunction;
 import fc.lang.DivisionFunction;
+import fc.lang.ExitCommand;
 import fc.lang.Expression;
 import fc.lang.FunctionExpression;
 import fc.lang.MultiplicationFunction;
@@ -85,6 +86,9 @@ public class Parser implements fc.parser.common.Parser {
             expect(Symbol.EQUAL);
             Expression expression = parseExpression();
             result = new AssignementExpression(identifier, expression);
+        }
+        if (accept(Symbol.EXIT) != null) {
+            result = new ExitCommand();
         }
         else {
             result = parseExpression();

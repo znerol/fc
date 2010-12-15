@@ -12,4 +12,5 @@ public enum Symbol {
     LET,
     IDENTIFIER,
     NUMBER,
+    EXIT,
 }
