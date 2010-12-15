@@ -87,7 +87,7 @@ public class Parser implements fc.parser.common.Parser {
             Expression expression = parseExpression();
             result = new AssignementExpression(identifier, expression);
         }
-        if (accept(Symbol.EXIT) != null) {
+        else if (accept(Symbol.EXIT) != null) {
             result = new ExitCommand();
         }
         else {
