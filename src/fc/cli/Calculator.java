@@ -12,7 +12,7 @@ import fc.parser.common.Parser;
 
 public class Calculator {
     private static String prompt = "> ";
-    private static String outprefix = "  ";
+    private static String outprefix = "< ";
     private static String markprefix = "--";
     
     public static void main(String[] args) {
@@ -73,11 +73,11 @@ public class Calculator {
                 System.out.println(outprefix + result);
             }
             catch (EvaluationException e) {
-                System.out.println(outprefix + e.getLocalizedMessage());
+                System.out.println(e.getLocalizedMessage());
             }
             catch (ParseException e) {
-                System.out.println(e.getColumnMarker("--", '-', '^'));
-                System.out.println(outprefix + e.getLocalizedMessage());
+                System.out.println(e.getColumnMarker(markprefix, '-', '^'));
+                System.out.println(e.getLocalizedMessage());
             }
 
         }
