@@ -1,7 +1,7 @@
 package fc.lang;
 
 /**
- * Return the sum of the values from the argument list
+ * Return the difference of the values from the argument list
  */
 public class DifferenceFunction implements Function {
     @Override

@@ -2,6 +2,9 @@ package fc.parser.common;
 
 import fc.lexer.StringPosition;
 
+/**
+ * Thrown when an error occured during parse step
+ */
 public class ParseException extends Exception implements StringPosition {
     private final int column;
 

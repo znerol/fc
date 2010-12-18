@@ -1,5 +1,8 @@
 package fc.lexer;
 
+/**
+ * Thrown when an error occurs during the lexical analysis step
+ */
 public class LexerException extends Exception implements StringPosition {
     private final int column;
 

@@ -4,6 +4,10 @@ package fc.parser.common;
 import fc.lang.Expression;
 import fc.lexer.LexerException;
 
+/**
+ * Common interface for parser classes converting the given input line into an
+ * expression ready to evaluate.
+ */
 public interface Parser {
     /**
      * Consume characters from input stream and construct expression

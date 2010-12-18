@@ -3,6 +3,10 @@ package fc.lexer;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 
+/**
+ * Implementation of a simple lexical analyzer based on CharacterIterator and
+ * StringBuilder.
+ */
 public class Lexer {
     private final CharacterIterator charIterator;
     private final StringBuilder stringBuilder = new StringBuilder();

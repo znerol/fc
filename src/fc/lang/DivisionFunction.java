@@ -1,6 +1,8 @@
 package fc.lang;
 
-
+/**
+ * Divide the first argument by the remaining ones
+ */
 public class DivisionFunction implements Function {
     @Override
     public double apply(double... arguments)

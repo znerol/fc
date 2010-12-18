@@ -1,5 +1,9 @@
 package fc.lexer;
 
+/**
+ * Represents a character or sequence of characters read from the input and
+ * classified by the lexical analyzer.
+ */
 public class Token {
     private final int position;
     private final Symbol symbol;

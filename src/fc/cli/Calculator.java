@@ -12,6 +12,16 @@ import fc.lexer.StringPosition;
 import fc.parser.common.ParseException;
 import fc.parser.common.Parser;
 
+/**
+ * Command line interface for the floating point calculator. By means of the
+ * 'parser' property it is possible to choose which parser implementation is
+ * used:
+ * 
+ * <pre>
+ * java fc.cli.Calculator -Dparser=fc.parser.rdp.Parser
+ * java fc.cli.Calculator -Dparser=fc.parser.javacc.Parser
+ * </pre>
+ */
 public class Calculator {
     private static String prompt = "> ";
     private static String outprefix = "< ";
@@ -38,18 +48,14 @@ public class Calculator {
     }
 
     /**
-     * Command line interface for the floating point calculator. By means of the
-     * 'parser' property it is possible to choose which parser implementation is
-     * used:
-     * 
-     * java fc.cli.Calculator -Dparser=fc.parser.rdp.Parser java
-     * fc.cli.Calculator -Dparser=fc.parser.javacc.Parser
+     * Command line interface for the floating point calculator main function.
      * 
      * @param args
+     *            this program does not take any arguments
      */
     public static void main(String[] args) {
-        String parserName = System
-                .getProperty("parser", "fc.parser.rdp.Parser");
+        String parserName = System.getProperty("parser",
+                "fc.parser.rdp.Parser");
         Parser parser;
 
         // Load parser class and create new instance
@@ -58,20 +64,20 @@ public class Calculator {
         }
         catch (InstantiationException e) {
             System.out.println(e);
-            System.out
-                    .println("ERROR: Failed to instantiate the specified parser class");
+            System.out.println(
+                    "ERROR: Failed to instantiate the specified parser class");
             return;
         }
         catch (IllegalAccessException e) {
             System.out.println(e);
-            System.out
-                    .println("ERROR: Failed to access the specified parser class");
+            System.out.println(
+                    "ERROR: Failed to access the specified parser class");
             return;
         }
         catch (ClassNotFoundException e) {
             System.out.println(e);
-            System.out
-                    .println("ERROR: The specified parser class was not found");
+            System.out.println(
+                    "ERROR: The specified parser class was not found");
             return;
         }
 
