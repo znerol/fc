@@ -43,3 +43,7 @@ section in the project properties. Mockito is free software and can be optained
 from the mockito website:
 
 http://www.mockito.org/
+
+The test case fc.parser.AcceptanceTest is modelled after the examples from the
+problem definition. This test case can be used to verify if the implemented
+parsers match the requirements.
