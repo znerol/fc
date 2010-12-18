@@ -200,9 +200,24 @@ public class Lexer {
             }
         };
 
-        return scan(charIterator, digit, stringBuilder)
-                + scan(charIterator, dot, 1, stringBuilder)
-                + scan(charIterator, digit, stringBuilder);
+        int digitcount;
+        int dotcount;
+
+        // Scan zero or more digits
+        digitcount = scan(charIterator, digit, stringBuilder);
+        // Scan zero or one dot
+        dotcount = scan(charIterator, dot, 1, stringBuilder);
+        // Scan zero or more digits
+        digitcount += scan(charIterator, digit, stringBuilder);
+
+        // If we've only scanned a dot we have to back out.
+        if (digitcount == 0 && dotcount == 1) {
+            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+            charIterator.previous();
+            dotcount--;
+        }
+
+        return digitcount + dotcount;
     }
 
     /**

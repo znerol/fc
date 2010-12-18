@@ -175,4 +175,10 @@ public class LexerTest {
         Lexer lexer = new Lexer("%");
         lexer.nextToken();
     }
+
+    @Test(expected=LexerException.class)
+    public void testDecimalDotOnly() throws LexerException {
+        Lexer lexer = new Lexer(".");
+        lexer.nextToken();
+    }
 }
