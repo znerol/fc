@@ -1,103 +1,149 @@
 package fc.lexer;
 
 import java.text.CharacterIterator;
-import java.text.NumberFormat;
-import java.text.ParseException;
 import java.text.StringCharacterIterator;
 
 public class Lexer {
     private final CharacterIterator charIterator;
+    private final StringBuilder stringBuilder = new StringBuilder();
 
     public Lexer(String input) {
         charIterator = new StringCharacterIterator(input);
     }
 
-    public Token nextToken() {
+    public Token nextToken() throws LexerException {
         Token result;
 
         // consume leading whitespace
-        scanWhitespace();
+        scanWhitespace(null);
+
+        int tokenPosition = charIterator.getIndex() + 1;
 
         switch (charIterator.current()) {
         case CharacterIterator.DONE:
-            result = new Token(charIterator.getIndex() + 1, Symbol.END);
+            result = new Token(tokenPosition, Symbol.END);
             charIterator.next();
             break;
 
         case '=':
-            result = new Token(charIterator.getIndex() + 1, Symbol.EQUAL);
+            result = new Token(tokenPosition, Symbol.EQUAL);
             charIterator.next();
             break;
 
         case '(':
-            result = new Token(charIterator.getIndex() + 1, Symbol.LPAREN);
+            result = new Token(tokenPosition, Symbol.LPAREN);
             charIterator.next();
             break;
 
         case ')':
-            result = new Token(charIterator.getIndex() + 1, Symbol.RPAREN);
+            result = new Token(tokenPosition, Symbol.RPAREN);
             charIterator.next();
             break;
 
         case '+':
-            result = new Token(charIterator.getIndex() + 1, Symbol.PLUS);
+            result = new Token(tokenPosition, Symbol.PLUS);
             charIterator.next();
             break;
 
         case '-':
-            result = new Token(charIterator.getIndex() + 1, Symbol.MINUS);
+            result = new Token(tokenPosition, Symbol.MINUS);
             charIterator.next();
             break;
 
         case '*':
-            result = new Token(charIterator.getIndex() + 1, Symbol.MULTIPLY);
+            result = new Token(tokenPosition, Symbol.MULTIPLY);
             charIterator.next();
             break;
 
         case '/':
-            result = new Token(charIterator.getIndex() + 1, Symbol.DIVIDE);
+            result = new Token(tokenPosition, Symbol.DIVIDE);
             charIterator.next();
             break;
 
         default:
-            String identifierOrNumber = scanIdentifierOrNumber();
+            // clear string buffer
+            stringBuilder.delete(0, stringBuilder.length());
 
-            try {
-                Number number;
-                number = NumberFormat.getInstance().parse(identifierOrNumber);
-                result = new Token(charIterator.getIndex() + 1, Symbol.NUMBER, identifierOrNumber, number);
+            if (scanNumber(stringBuilder) > 0) {
+                result = new Token(tokenPosition, Symbol.NUMBER,
+                        stringBuilder.toString());
             }
-            catch (ParseException e) {
-                if (identifierOrNumber.equals("let")) {
-                    result = new Token(charIterator.getIndex() + 1, Symbol.LET);
+            else if (scanIdentifier(stringBuilder) > 0) {
+                String identifier = stringBuilder.toString();
+
+                if (identifier.equals("let")) {
+                    result = new Token(tokenPosition, Symbol.LET);
                 }
-                else if (identifierOrNumber.equals("exit")) {
-                    result = new Token(charIterator.getIndex() + 1, Symbol.EXIT);
+                else if (identifier.equals("exit")) {
+                    result = new Token(tokenPosition, Symbol.EXIT);
                 }
                 else {
-                    result = new Token(charIterator.getIndex() + 1, Symbol.IDENTIFIER, identifierOrNumber);
+                    result = new Token(tokenPosition, Symbol.IDENTIFIER,
+                            identifier);
                 }
+            }
+            else {
+                throw new LexerException("Unexpected symbol '"
+                        + charIterator.current() + "'", tokenPosition);
             }
         }
 
         return result;
     }
 
-    private void scanWhitespace() {
-        for (char c = charIterator.current(); c != CharacterIterator.DONE
-                && Character.isWhitespace(c); c = charIterator.next())
-            ;
-    }
-
-    private String scanIdentifierOrNumber() {
-        String result = "";
+    private int scan(CharacterIterator charIterator, CharMatcher charMatcher,
+            StringBuilder stringBuilder) {
+        int count = 0;
 
         for (char c = charIterator.current(); c != CharacterIterator.DONE
-                && (Character.isLetterOrDigit(c) || c == '.'); c = charIterator
-                .next()) {
-            result = result + c;
+                && charMatcher.match(c); c = charIterator.next()) {
+            if (stringBuilder != null) {
+                stringBuilder.append(c);
+            }
+            count++;
         }
 
-        return result;
+        return count;
+    }
+
+    private int scanWhitespace(StringBuilder stringBuilder) {
+        final CharMatcher matcher = new CharMatcher() {
+            @Override
+            public boolean match(char c) {
+                return Character.isWhitespace(c);
+            }
+        };
+
+        return scan(charIterator, matcher, null);
+    }
+
+    private int scanNumber(StringBuilder stringBuilder) {
+        final CharMatcher digitOrDecimalDot = new CharMatcher() {
+            @Override
+            public boolean match(char c) {
+                return Character.isDigit(c) || c == '.';
+            }
+        };
+
+        final CharMatcher digit = new CharMatcher() {
+            @Override
+            public boolean match(char c) {
+                return Character.isDigit(c);
+            }
+        };
+
+        return scan(charIterator, digitOrDecimalDot, stringBuilder)
+                + scan(charIterator, digit, stringBuilder);
+    }
+
+    private int scanIdentifier(StringBuilder stringBuilder) {
+        final CharMatcher matcher = new CharMatcher() {
+            @Override
+            public boolean match(char c) {
+                return Character.isLetter(c);
+            }
+        };
+
+        return scan(charIterator, matcher, stringBuilder);
     }
 }

@@ -12,6 +12,7 @@ import fc.lang.MultiplicationFunction;
 import fc.lang.SumFunction;
 import fc.lang.VariableExpression;
 import fc.lexer.Lexer;
+import fc.lexer.LexerException;
 import fc.lexer.Symbol;
 import fc.lexer.Token;
 import fc.parser.common.ParseException;
@@ -28,8 +29,9 @@ public class Parser implements fc.parser.common.Parser {
      * treatment and return the current token.
      * 
      * @return the current Token
+     * @throws LexerException
      */
-    public Token advance() {
+    public Token advance() throws LexerException {
         Token previousToken = currentToken;
         currentToken = lexer.nextToken();
         return previousToken;
@@ -41,8 +43,9 @@ public class Parser implements fc.parser.common.Parser {
      * returned and no action is performed.
      * 
      * @return the current Token or null
+     * @throws LexerException
      */
-    public Token accept(Symbol symbol) {
+    public Token accept(Symbol symbol) throws LexerException {
         if (currentToken.getSymbol() == symbol) {
             return advance();
         }
@@ -57,8 +60,9 @@ public class Parser implements fc.parser.common.Parser {
      * exception is thrown.
      * 
      * @return the current Token
+     * @throws LexerException
      */
-    public Token expect(Symbol symbol) throws ParseException {
+    public Token expect(Symbol symbol) throws ParseException, LexerException {
         Token previousToken = accept(symbol);
 
         if (previousToken == null) {
@@ -73,11 +77,12 @@ public class Parser implements fc.parser.common.Parser {
      * Parse a basic statement
      * 
      * Statement -> 'let' Identifier '=' Expr | Expr
-     *
+     * 
      * @return resulting expression
      * @throws ParseException
+     * @throws LexerException
      */
-    private Expression parseStatement() throws ParseException {
+    private Expression parseStatement() throws ParseException, LexerException {
         Expression result;
 
         if (accept(Symbol.LET) != null) {
@@ -99,13 +104,14 @@ public class Parser implements fc.parser.common.Parser {
 
     /**
      * Parse an addition or difference expression
-     *
+     * 
      * Expr -> Term { ('+'|'-') Term }
-     *
+     * 
      * @return
      * @throws ParseException
+     * @throws LexerException
      */
-    private Expression parseExpression() throws ParseException {
+    private Expression parseExpression() throws ParseException, LexerException {
         Expression result;
         // left summand
         result = parseTerm();
@@ -136,8 +142,9 @@ public class Parser implements fc.parser.common.Parser {
      * 
      * @return
      * @throws ParseException
+     * @throws LexerException
      */
-    private Expression parseTerm() throws ParseException {
+    private Expression parseTerm() throws ParseException, LexerException {
         Expression result;
 
         // parse one factor
@@ -169,8 +176,10 @@ public class Parser implements fc.parser.common.Parser {
      * Factor -> [ '-' ] ( '(' Expr ')' | Num | Identifier )
      * 
      * Note: this function covers the first part of the EBNF rule above.
+     * 
+     * @throws LexerException
      */
-    private Expression parseFactor() throws ParseException {
+    private Expression parseFactor() throws ParseException, LexerException {
         Expression result;
 
         // first term
@@ -188,18 +197,21 @@ public class Parser implements fc.parser.common.Parser {
 
     /**
      * Parse factor with leading unary minus removed
-     *
+     * 
      * Factor -> [ '-' ] ( '(' Expr ')' | Num | Identifier )
-     *
+     * 
      * Note: this function covers the second part of the EBNF rule above.
+     * 
+     * @throws LexerException
      */
-    private Expression parseFactorUnsigned() throws ParseException {
+    private Expression parseFactorUnsigned() throws ParseException,
+            LexerException {
         Expression result;
 
         Token token;
         if ((token = accept(Symbol.NUMBER)) != null) {
-            result = new ConstantValueExpression(token.getNumberValue()
-                    .doubleValue());
+            result = new ConstantValueExpression(Double.parseDouble(token
+                    .getStringValue()));
         }
         else if ((token = accept(Symbol.IDENTIFIER)) != null) {
             result = new VariableExpression(token.getStringValue());
@@ -211,14 +223,15 @@ public class Parser implements fc.parser.common.Parser {
         else {
             throw new ParseException(
                     "Expected a number, identifier or a left parenthesis but got "
-                            + currentToken.getSymbol() + " instead", currentToken.getPosition());
+                            + currentToken.getSymbol() + " instead",
+                    currentToken.getPosition());
         }
 
         return result;
     }
 
     @Override
-    public Expression parse(String line) throws ParseException {
+    public Expression parse(String line) throws ParseException, LexerException {
         lexer = new Lexer(line);
 
         advance();

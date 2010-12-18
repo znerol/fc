@@ -7,6 +7,7 @@ import org.junit.Test;
 import fc.lang.EvaluationException;
 import fc.lang.Expression;
 import fc.lang.Scope;
+import fc.lexer.LexerException;
 import fc.parser.common.ParseException;
 
 public class ParserTest {
@@ -16,7 +17,7 @@ public class ParserTest {
     };
 
     @Test
-    public void testConstantValue() throws ParseException, EvaluationException {
+    public void testConstantValue() throws ParseException, EvaluationException, LexerException {
         for (fc.parser.common.Parser parser : parsers) {
             Scope scope = new Scope();
             Expression expression = parser.parse("42");
@@ -26,7 +27,7 @@ public class ParserTest {
     }
 
     @Test
-    public void testUnaryMinus() throws ParseException, EvaluationException {
+    public void testUnaryMinus() throws ParseException, EvaluationException, LexerException {
         for (fc.parser.common.Parser parser : parsers) {
             Scope scope = new Scope();
             Expression expression = parser.parse("-88");
@@ -37,7 +38,7 @@ public class ParserTest {
 
     @Test
     public void testSimpleOperations() throws ParseException,
-            EvaluationException {
+            EvaluationException, LexerException {
         for (fc.parser.common.Parser parser : parsers) {
             Scope scope = new Scope();
             Expression expression = parser.parse("\r42/2+\t6 -4.0* 1");
@@ -48,7 +49,7 @@ public class ParserTest {
 
     @Test
     public void testCalculationWithParanthesis() throws ParseException,
-            EvaluationException {
+            EvaluationException, LexerException {
         for (fc.parser.common.Parser parser : parsers) {
             Scope scope = new Scope();
             Expression expression = parser.parse("16 / (2 +6)");
@@ -59,7 +60,7 @@ public class ParserTest {
 
     @Test
     public void testVariableBinding() throws ParseException,
-            EvaluationException {
+            EvaluationException, LexerException {
         for (fc.parser.common.Parser parser : parsers) {
             Scope scope = new Scope();
             double result;
@@ -78,10 +79,11 @@ public class ParserTest {
     /**
      * Bugfix test for rdp.Parser not respecting unary minus before an
      * identifier.
+     * @throws LexerException 
      */
     @Test
     public void testVariableBindingNegativeFactors() throws ParseException,
-            EvaluationException {
+            EvaluationException, LexerException {
         for (fc.parser.common.Parser parser : parsers) {
             Scope scope = new Scope();
             double result;
@@ -100,10 +102,11 @@ public class ParserTest {
     /**
      * Bugfix test for rdp.Parser not respecting unary minus before an
      * identifier which is not the last one in an expression.
+     * @throws LexerException 
      */
     @Test
     public void testVariableBindingNegativeFactorAtFirstPosition()
-            throws ParseException, EvaluationException {
+            throws ParseException, EvaluationException, LexerException {
         for (fc.parser.common.Parser parser : parsers) {
             Scope scope = new Scope();
             double result;
@@ -120,7 +123,7 @@ public class ParserTest {
     }
 
     @Test
-    public void testUnbalancedParanthesis() {
+    public void testUnbalancedParanthesis() throws LexerException {
         for (fc.parser.common.Parser parser : parsers) {
             try {
                 parser.parse(" 8 + 7 ((5*6/4)");
@@ -133,7 +136,7 @@ public class ParserTest {
     }
 
     @Test
-    public void testMissingOperator() {
+    public void testMissingOperator() throws LexerException {
         for (fc.parser.common.Parser parser : parsers) {
             try {
                 parser.parse("8 x + 4");
@@ -146,7 +149,7 @@ public class ParserTest {
     }
 
     @Test
-    public void testMultipleOperators() {
+    public void testMultipleOperators() throws LexerException {
         for (fc.parser.common.Parser parser : parsers) {
             try {
                 parser.parse("8 * + 4");

@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import fc.lang.EvaluationException;
 import fc.lang.Scope;
 import fc.lang.UnboundVariableException;
+import fc.lexer.LexerException;
 import fc.parser.common.ParseException;
 import fc.parser.common.Parser;
 
@@ -76,6 +77,10 @@ public class Calculator {
                 System.out.println(e.getLocalizedMessage());
             }
             catch (ParseException e) {
+                System.out.println(e.getColumnMarker(markprefix, '-', '^'));
+                System.out.println(e.getLocalizedMessage());
+            }
+            catch (LexerException e) {
                 System.out.println(e.getColumnMarker(markprefix, '-', '^'));
                 System.out.println(e.getLocalizedMessage());
             }

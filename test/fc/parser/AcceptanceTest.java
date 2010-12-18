@@ -8,6 +8,7 @@ import fc.lang.ConstantValueExpression;
 import fc.lang.EvaluationException;
 import fc.lang.Expression;
 import fc.lang.Scope;
+import fc.lexer.LexerException;
 import fc.parser.common.ParseException;
 
 public class AcceptanceTest {
@@ -18,7 +19,7 @@ public class AcceptanceTest {
 
     @Test
     public void testBeo1Example1() throws ParseException,
-            EvaluationException {
+            EvaluationException, LexerException {
         for (fc.parser.common.Parser parser : parsers) {
             Scope scope = new Scope();
             Expression expression = parser.parse("(4+5)*3/4");
@@ -29,7 +30,7 @@ public class AcceptanceTest {
 
     @Test
     public void testBeo1Example2() throws ParseException,
-            EvaluationException {
+            EvaluationException, LexerException {
         for (fc.parser.common.Parser parser : parsers) {
             Scope scope = new Scope();
             Expression expression = parser.parse("(10*3.141592)");
@@ -40,7 +41,7 @@ public class AcceptanceTest {
 
     @Test
     public void testBeo1Example3() throws ParseException,
-            EvaluationException {
+            EvaluationException, LexerException {
         for (fc.parser.common.Parser parser : parsers) {
             Scope scope = new Scope();
             Expression expression = parser.parse("-4");
@@ -50,7 +51,7 @@ public class AcceptanceTest {
     }
 
     @Test
-    public void testBeo1Example4() {
+    public void testBeo1Example4() throws LexerException {
         for (fc.parser.common.Parser parser : parsers) {
             try {
                 parser.parse("lex x=5*50");
@@ -64,7 +65,7 @@ public class AcceptanceTest {
 
     @Test
     public void testBeo1Example5() throws ParseException,
-            EvaluationException {
+            EvaluationException, LexerException {
         for (fc.parser.common.Parser parser : parsers) {
             Scope scope = new Scope();
             Expression expression = parser.parse("let x=5*50");
@@ -75,7 +76,7 @@ public class AcceptanceTest {
 
     @Test
     public void testBeo1Example6() throws ParseException,
-            EvaluationException {
+            EvaluationException, LexerException {
         for (fc.parser.common.Parser parser : parsers) {
             Scope scope = new Scope();
             Expression expression = parser.parse("let y=-555.3");
@@ -86,7 +87,7 @@ public class AcceptanceTest {
 
     @Test
     public void testBeo1Example7() throws ParseException,
-            EvaluationException {
+            EvaluationException, LexerException {
         for (fc.parser.common.Parser parser : parsers) {
             Scope scope = new Scope();
             scope.bind("x", new ConstantValueExpression(250.0));
@@ -106,7 +107,7 @@ public class AcceptanceTest {
 
     @Test
     public void testBeo1Example8() throws ParseException,
-            EvaluationException {
+            EvaluationException, LexerException {
         for (fc.parser.common.Parser parser : parsers) {
             Scope scope = new Scope();
             scope.bind("x", new ConstantValueExpression(250.0));
@@ -120,7 +121,7 @@ public class AcceptanceTest {
 
     @Test
     public void testBeo1Example9() throws ParseException,
-            EvaluationException {
+            EvaluationException, LexerException {
         for (fc.parser.common.Parser parser : parsers) {
             Scope scope = new Scope();
             scope.bind("x", new ConstantValueExpression(250.0));
@@ -133,20 +134,23 @@ public class AcceptanceTest {
     }
 
     @Test
-    public void testBeo1Example10() {
+    public void testBeo1Example10()  {
         for (fc.parser.common.Parser parser : parsers) {
             try {
                 parser.parse("5+$6");
-                fail("Parser " + parser + " must throw ParseException if an unexpected token is encountered");
+                fail("Parser " + parser + " must throw LexerException or ParseException if an unexpected token is encountered");
             }
             catch (ParseException e) {
+                // expected
+            }
+            catch (LexerException e) {
                 // expected
             }
         }
     }
 
     @Test
-    public void testBeo1Example11() {
+    public void testBeo1Example11() throws LexerException {
         for (fc.parser.common.Parser parser : parsers) {
             try {
                 parser.parse("let x+5");
@@ -159,20 +163,23 @@ public class AcceptanceTest {
     }
 
     @Test
-    public void testBeo1Example12() {
+    public void testBeo1Example12() throws ParseException {
         for (fc.parser.common.Parser parser : parsers) {
             try {
                 parser.parse("let k=)");
-                fail("Parser " + parser + " must throw ParseException if expression cannot be parsed after equal sign");
+                fail("Parser " + parser + " must throw LexerException or ParseException if expression cannot be parsed after equal sign");
             }
             catch (ParseException e) {
+                // expected
+            }
+            catch (LexerException e) {
                 // expected
             }
         }
     }
 
     @Test
-    public void testBeo1Example13() {
+    public void testBeo1Example13() throws LexerException {
         for (fc.parser.common.Parser parser : parsers) {
             try {
                 parser.parse("let k=-=");
@@ -186,7 +193,7 @@ public class AcceptanceTest {
 
     @Test
     public void testBeo1Example14() throws ParseException,
-            EvaluationException {
+            EvaluationException, LexerException {
         for (fc.parser.common.Parser parser : parsers) {
             Scope scope = new Scope();
             Expression expression = parser.parse("let x=-5");
@@ -197,7 +204,7 @@ public class AcceptanceTest {
 
     @Test
     public void testBeo1Example15() throws ParseException,
-            EvaluationException {
+            EvaluationException, LexerException {
         for (fc.parser.common.Parser parser : parsers) {
             Scope scope = new Scope();
             scope.bind("k", new ConstantValueExpression(-5));
@@ -209,7 +216,7 @@ public class AcceptanceTest {
 
     @Test
     public void testBeo1Example16() throws ParseException,
-            EvaluationException {
+            EvaluationException, LexerException {
         for (fc.parser.common.Parser parser : parsers) {
             Scope scope = new Scope();
             Expression expression = parser.parse("4+-4");
