@@ -1,6 +1,6 @@
 package fc.lexer;
 
-public class LexerException extends Exception {
+public class LexerException extends Exception implements StringPosition {
     private final int column;
 
     /**
@@ -13,14 +13,7 @@ public class LexerException extends Exception {
         this.column = column;
     }
 
-    public String getColumnMarker(String prefix, char fill, char marker) {
-        String result = prefix;
-
-        for (int i = 1; i < column; i++) {
-            result += fill;
-        }
-
-        result += marker;
-        return result;
+    public int getColumn() {
+        return column;
     }
 }
